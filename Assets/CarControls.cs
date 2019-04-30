@@ -28,6 +28,9 @@ public class CarControls : MonoBehaviour
 
     private Rigidbody componentRigidbody;
 
+    private Vector3 shakeTorquesApplied;
+    private float timeSinceShaked;
+
     public float CurrentSpeed { get; private set; }
 
     public bool IsGrounded { get; private set; }
@@ -69,9 +72,25 @@ public class CarControls : MonoBehaviour
 
         CurrentSpeed = transform.InverseTransformDirection(GetComponent<Rigidbody>().velocity).z;
 
-        IsGrounded = Physics.Raycast(transform.position + transform.up * .25f, -transform.up, .5f);
+        IsGrounded = Physics.Raycast(transform.position + transform.up * .5f, -transform.up, 1f);
 
-        componentRigidbody.AddForce(0, -DownForce, 0);
+        componentRigidbody.AddForce(-DownForce * transform.up);
+
+        if (!IsGrounded)
+        {
+            // Car shake when flying
+            if (timeSinceShaked > .1f)
+            {
+                Vector3 shakeTorquesNew = Random.insideUnitSphere.normalized;
+                componentRigidbody.AddTorque((shakeTorquesNew - shakeTorquesApplied) * 3500);
+                shakeTorquesApplied = shakeTorquesNew;
+                timeSinceShaked -= .1f;
+            }
+            else
+            {
+                timeSinceShaked += Time.fixedDeltaTime;
+            }
+        }
     }
 
     private static void ApplyLocalPositionToVisuals(WheelCollider collider, Transform visual)

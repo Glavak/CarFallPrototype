@@ -27,15 +27,12 @@ public class CameraFollower : MonoBehaviour
         float targetFov = CarControls.IsGrounded
             ? Mathf.LerpUnclamped(CloseFov, FarFov, CarControls.CurrentSpeed / FarSpeed)
             : 60f;
-        mainCamera.fieldOfView = Mathf.Lerp(mainCamera.fieldOfView, targetFov, Time.deltaTime);
+        mainCamera.fieldOfView = Mathf.MoveTowards(mainCamera.fieldOfView, targetFov, Time.deltaTime);
 
         transform.position = CarControls.transform.position;
 
-        Debug.Log(CarControls.IsGrounded);
-        transform.rotation = Quaternion.Slerp(
-            transform.rotation,
-            CarControls.IsGrounded ? CarControls.transform.rotation : Quaternion.identity,
-            Time.deltaTime
-        );
+        Quaternion targetRotation =
+            CarControls.IsGrounded ? CarControls.transform.rotation : Quaternion.Euler(30, 0, 0);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime*1.1f);
     }
 }
