@@ -12,6 +12,9 @@ public class CameraFollower : MonoBehaviour
     public CarControls CarControls;
     private Camera mainCamera;
 
+    private Vector3 shakeRotations;
+    private float timeSinceShaked;
+
     private void Start()
     {
         mainCamera = GetComponentInChildren<Camera>();
@@ -31,8 +34,28 @@ public class CameraFollower : MonoBehaviour
 
         transform.position = CarControls.transform.position;
 
-        Quaternion targetRotation =
-            CarControls.IsGrounded ? CarControls.transform.rotation : Quaternion.Euler(30, 0, 0);
-        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime*1.1f);
+        Quaternion targetRotation;
+        if (CarControls.IsGrounded)
+        {
+            targetRotation = CarControls.transform.rotation;
+            targetRotation *= Quaternion.Euler(shakeRotations * CarControls.CurrentSpeed / FarSpeed);
+        }
+        else
+        {
+            targetRotation = Quaternion.Euler(30, 0, 0);
+            targetRotation *= Quaternion.Euler(shakeRotations);
+        }
+
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 1.1f);
+        
+        if (timeSinceShaked > .1f)
+        {
+            shakeRotations = Random.insideUnitSphere.normalized;
+            timeSinceShaked -= .1f;
+        }
+        else
+        {
+            timeSinceShaked += Time.fixedDeltaTime;
+        }
     }
 }
