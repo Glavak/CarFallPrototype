@@ -26,7 +26,8 @@ public class CameraFollower : MonoBehaviour
 
     private void Update()
     {
-        speedNormalized = Mathf.Lerp(speedNormalized, CarControls.CurrentSpeed / FarSpeed + CarControls.MotorInput*.4f, Time.deltaTime);
+        speedNormalized = Mathf.Lerp(speedNormalized,
+            CarControls.CurrentSpeed / FarSpeed + CarControls.MotorInput * .4f, Time.deltaTime);
 
         PositionCamera();
         GearShiftAnimation();
@@ -34,7 +35,8 @@ public class CameraFollower : MonoBehaviour
 
     private void PositionCamera()
     {
-        mainCamera.transform.position = Vector3.LerpUnclamped(ClosePosition.position, FarPosition.position, speedNormalized);
+        mainCamera.transform.position =
+            Vector3.LerpUnclamped(ClosePosition.position, FarPosition.position, speedNormalized);
 
         mainCamera.transform.rotation = Quaternion.Slerp(ClosePosition.rotation, FarPosition.rotation, speedNormalized);
 
@@ -49,7 +51,7 @@ public class CameraFollower : MonoBehaviour
         if (CarControls.IsGrounded)
         {
             targetRotation = CarControls.transform.rotation;
-            targetRotation *= Quaternion.Euler(shakeRotations * speedNormalized);
+            targetRotation *= Quaternion.Euler(shakeRotations * speedNormalized * 1.6f);
         }
         else
         {

@@ -43,7 +43,7 @@ public class CarControls : MonoBehaviour
 
     public void FixedUpdate()
     {
-        float torque = (MotorInput + CurrentSpeed/100f) * MaxMotorTorque;
+        float torque = (MotorInput + CurrentSpeed/20f) * MaxMotorTorque;
         float brakes = MotorInput < 0 ? -MotorInput * BreakingTorque : 0;
         float steering = MaxSteeringAngle * SteerInput;
 
@@ -70,7 +70,7 @@ public class CarControls : MonoBehaviour
             ApplyLocalPositionToVisuals(axleInfo.RightWheel, axleInfo.RightWheelVisual);
         }
 
-        CurrentSpeed = transform.InverseTransformDirection(GetComponent<Rigidbody>().velocity).z;
+        CurrentSpeed = Mathf.Abs(transform.InverseTransformDirection(GetComponent<Rigidbody>().velocity).z);
 
         IsGrounded = Physics.Raycast(transform.position + transform.up * .5f, -transform.up, 1f);
 

@@ -5,8 +5,15 @@ public class CarStats : MonoBehaviour
 {
     public CarControls CarControls;
 
+    private Text componentText;
+
+    private void Start()
+    {
+        componentText = GetComponent<Text>();
+    }
+
     private void Update()
     {
-        GetComponent<Text>().text = Mathf.Round(CarControls.CurrentSpeed) + " m/s";
+        componentText.text = Mathf.Round(CarControls.CurrentSpeed) + " m/s";
     }
 }
